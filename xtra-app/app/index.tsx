@@ -1,4 +1,6 @@
+
 import { Text, View } from "react-native";
+import { Button } from "../components/Button";
 
 export default function Index() {
   return (
@@ -7,9 +9,11 @@ export default function Index() {
         flex: 1,
         justifyContent: "center",
         alignItems: "center",
+        gap: 20,
       }}
     >
-      <Text>Connect your Instagram account with Canva, then login to Xtra.</Text>
+      <Text>Xtra App</Text>
+      <Button title="Log in with Canva" onPress={() => alert('Button Pressed!')} />
     </View>
   );
 }
