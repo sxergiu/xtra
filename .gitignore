@@ -24,7 +24,8 @@ hs_err_pid*
 replay_pid*
 
 .expo
-
+canva-auth.md
 AGENTS.md
-xtra-server/.env.example
+xtra-server/.env
 xtra-server/node_modules
+
