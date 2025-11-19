@@ -27,3 +27,4 @@ replay_pid*
 
 AGENTS.md
 xtra-server/.env.example
+xtra-server/node_modules
