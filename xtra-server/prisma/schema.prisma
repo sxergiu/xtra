@@ -1,0 +1,96 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgres"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String    @id @default(uuid())
+  email         String    @unique
+  passwordHash  String
+  displayName   String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  businessProfile BusinessProfile?
+}
+
+model BusinessProfile {
+  id          String   @id @default(uuid())
+  userId      String   @unique
+  timezone    String   @default("UTC")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user                 User                  @relation(fields: [userId], references: [id])
+  integrationInstagram IntegrationInstagram?
+  integrationCanva     IntegrationCanva?
+  templates            Template[]
+  scheduledPosts       ScheduledPost[]
+}
+
+model IntegrationInstagram {
+  id                   String   @id @default(uuid())
+  businessProfileId    String   @unique
+  instagramUserId      String
+  pageId               String?
+  accessTokenEncrypted String
+  refreshTokenEncrypted String?
+  tokenExpiresAt       DateTime?
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+
+  businessProfile BusinessProfile @relation(fields: [businessProfileId], references: [id])
+}
+
+model IntegrationCanva {
+  id                   String   @id @default(uuid())
+  businessProfileId    String   @unique
+  canvaUserId          String
+  accessTokenEncrypted String
+  refreshTokenEncrypted String?
+  tokenExpiresAt       DateTime?
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+
+  businessProfile BusinessProfile @relation(fields: [businessProfileId], references: [id])
+}
+
+model Template {
+  id                String   @id @default(uuid())
+  businessProfileId String
+  title             String
+  canvaDesignId     String?
+  imageUrl          String?
+  defaultCaption    String?
+  defaultHashtags   String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  businessProfile BusinessProfile @relation(fields: [businessProfileId], references: [id])
+  scheduledPosts  ScheduledPost[]
+}
+
+model ScheduledPost {
+  id                String   @id @default(uuid())
+  businessProfileId String
+  templateId        String
+  scheduledAt       DateTime
+  customCaption     String?
+  customHashtags    String?
+  status            String   @default("scheduled") // scheduled, posted, failed, cancelled
+  postedAt          DateTime?
+  instagramMediaId  String?
+  errorMessage      String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  businessProfile BusinessProfile @relation(fields: [businessProfileId], references: [id])
+  template        Template        @relation(fields: [templateId], references: [id])
+}
