@@ -1,6 +1,8 @@
 import Fastify from 'fastify'
 import cors from '@fastify/cors'
+import fastifyJwt from '@fastify/jwt'
 import * as dotenv from 'dotenv'
+import authRoutes from './auth-routes.js'
 import canvaAuthRoutes from './canva-auth.js'
 
 dotenv.config()
@@ -13,7 +15,13 @@ await fastify.register(cors, {
     origin: true // Allow all origins for development
 })
 
-// Register Canva Auth Routes
+// Register JWT
+fastify.register(fastifyJwt, {
+    secret: process.env.JWT_SECRET || 'supersecret' // Use env var in production
+})
+
+// Register Routes
+fastify.register(authRoutes)
 fastify.register(canvaAuthRoutes)
 
 fastify.get('/', async (request, reply) => {
